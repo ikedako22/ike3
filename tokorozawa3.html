@@ -1,0 +1,287 @@
+【指示1】下記の3つの場所を案内する所沢名所というwebページを作って<br>
+所沢航空公園<br>
+桜タウン<br>
+ととろの森<br>
+<br>
+【指示2】html/cssコードを作って<br>
+<br>
+【指示3】これにgoogleマップを座標で埋め込んで<br>
+<br>
+
+
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所沢名所ナビ — Tokorozawa Discovery</title>
+    <style>
+        /* --- 基本設定 --- */
+        :root {
+            --primary-color: #2d5a27; /* 自然の緑 */
+            --accent-color: #e91e63;  /* 桜のピンク */
+            --bg-color: #f4f7f4;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- ヘッダー --- */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80') center/cover;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+        }
+
+        /* --- コンテンツレイアウト --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .intro h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .intro h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--accent-color);
+        }
+
+        /* --- カードグリッド --- */
+        .spot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+        }
+
+        .card-tag {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        /* --- Google Map エリア --- */
+        .map-container {
+            width: 100%;
+            height: 200px;
+            border-top: 1px solid #eee;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* --- アクセス情報セクション --- */
+        .access-info {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .access-info h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .access-list {
+            list-style: none;
+            padding: 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .access-list li {
+            padding: 15px 0;
+            border-bottom: 1px dashed #ddd;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .access-list li:last-child {
+            border-bottom: none;
+        }
+
+        .icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* --- フッター --- */
+        footer {
+            background: #222;
+            color: #fff;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 80px;
+        }
+
+        /* --- レスポンシブ --- */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2rem; }
+            .spot-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>所沢名所ナビ</h1>
+    <p>空と文化と、トトロの森。心動く体験が、ここにある。</p>
+</header>
+
+<div class="container">
+    <section class="intro">
+        <h2>Discovery Tokorozawa</h2>
+        <p>日本初の飛行場から、最新のポップカルチャー、そして古き良きトトロの森まで。<br>
+        東京都心からわずか30分。所沢で見つける、新しい休日のカタチをご案内します。</p>
+    </section>
+
+    <div class="spot-grid">
+        <article class="card">
+            <img src="https://picsum.photos/id/43/600/400" alt="所沢航空記念公園">
+            <div class="card-content">
+                <span class="card-tag">History & Nature</span>
+                <h3>所沢航空記念公園</h3>
+                <p>日本の航空史が始まった「航空発祥の地」。広大な芝生、YS-11旅客機の展示、そして四季折々の自然が楽しめる市民のオアシスです。</p>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m13!1m3!1d3235.353347514304!2d139.47525387635955!3d35.80230232323386!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018e6e594d70035%3A0xc64436894564c480!2z5omA5rKi6Iiq56m66KiY5b-15YWs5ZyS!5e0!3m2!1sja!2sjp!4v1710000000000!5m2!1sja!2sjp" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </article>
+
+        <article class="card">
+            <img src="https://picsum.photos/id/452/600/400" alt="ところざわサクラタウン">
+            <div class="card-content">
+                <span class="card-tag" style="background: var(--accent-color);">Culture & Art</span>
+                <h3>ところざわサクラタウン</h3>
+                <p>KADOKAWAが手掛ける日本最大級のポップカルチャー発信拠点。隈研吾氏設計の「角川武蔵野ミュージアム」は圧巻の迫力です。</p>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m13!1m3!1d3235.48529245131!2d139.50532287635933!3d35.7990535234117!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018e97f0699268d%3A0x7d2424b9c1626217!2z44Go44GT44KN44GW44K144Kv44Op44K_44Km44Oz!5e0!3m2!1sja!2sjp!4v1710000000001!5m2!1sja!2sjp" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </article>
+
+        <article class="card">
+            <img src="https://picsum.photos/id/324/600/400" alt="トトロの森">
+            <div class="card-content">
+                <span class="card-tag">Nature & Ghibli</span>
+                <h3>トトロの森</h3>
+                <p>映画『となりのトトロ』のモデルの一つとされる狭山丘陵。ナショナルトラスト運動により守られた、懐かしい里山の風景に出会えます。</p>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m13!1m3!1d3236.42513476315!2d139.4300000763583!3d35.77590002467977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018e00138407371%3A0x1c67d337d12f127!2z44OI44OI44Ot44Gu5qOuIDHlj7flnLA!5e0!3m2!1sja!2sjp!4v1710000000002!5m2!1sja!2sjp" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </article>
+    </div>
+
+    <section class="access-info">
+        <h2>Access Guide</h2>
+        <ul class="access-list">
+            <li><span class="icon">✈️</span> <div><strong>所沢航空記念公園:</strong><br>西武新宿線「航空公園駅」東口下車すぐ</div></li>
+            <li><span class="icon">🌸</span> <div><strong>ところざわサクラタウン:</strong><br>JR武蔵野線「東所沢駅」より徒歩約10分</div></li>
+            <li><span class="icon">👣</span> <div><strong>トトロの森:</strong><br>西武狭山線「西武球場前駅」などから徒歩（エリアにより異なります）</div></li>
+        </ul>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2026 所沢名所ナビゲーター</p>
+    <p style="font-size: 0.8rem; opacity: 0.7;">※掲載情報は制作時のものです。最新の営業状況などは公式サイトをご確認ください。</p>
+</footer>
+
+</body>
+</html>
